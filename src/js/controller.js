@@ -2,15 +2,6 @@ import * as model from './model';
 import 'core-js/stable';
 import 'regenerator-runtime';
 import recipeView from './views/recipeView';
-const recipeContainer = document.querySelector('.recipe');
-
-const timeout = function (s) {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(`Request took too long! Timeout after ${s} second`));
-    }, s * 1000);
-  });
-};
 
 const GetOneReceipe = async function () {
   try {
