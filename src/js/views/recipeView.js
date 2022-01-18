@@ -5,7 +5,6 @@ class RecipeView {
   #ParentEl = document.querySelector('.recipe');
   #data;
   render(data) {
-    console.log(data);
     this.#data = data;
     const html = this.#generateHtlm();
     this.#ParentEl.innerHTML = '';
