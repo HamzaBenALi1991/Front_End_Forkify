@@ -536,14 +536,14 @@ const GetOneReceipe = async function() {
         // Setting  Up recipe into the DOM
         _recipeViewDefault.default.render(_model.state.recipe);
     } catch (err) {
-        console.log(err);
+        _recipeViewDefault.default.errorHandlying();
     }
 };
-[
-    'hashchange',
-    'load'
-].forEach((ev)=>window.addEventListener(ev, GetOneReceipe)
-);
+// this is for DOM EVENT HANDLYING
+const init = function() {
+    _recipeViewDefault.default.addHandlerRender(GetOneReceipe);
+};
+init();
 
 },{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1pVJj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -552,8 +552,6 @@ parcelHelpers.export(exports, "state", ()=>state
 );
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
-var _regeneratorRuntime = require("regenerator-runtime");
-var _config = require("./config");
 var _helpers = require("./helpers");
 const state = {
     recipe: {
@@ -576,11 +574,43 @@ const loadRecipe = async function(id) {
             servings: recipe.servings
         };
     } catch (err) {
-        console.error(`Opeération Failed : ${err}`);
+        throw err;
     }
 };
 
-},{"regenerator-runtime":"1EBPE","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./config":"6V52N","./helpers":"9RX9R"}],"1EBPE":[function(require,module,exports) {
+},{"./helpers":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"9RX9R":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "getJson", ()=>getJson
+);
+parcelHelpers.export(exports, "timeout", ()=>timeout
+);
+var _regeneratorRuntime = require("regenerator-runtime");
+var _config = require("./config");
+const getJson = async function(url) {
+    try {
+        const res = await Promise.race([
+            fetch(`${_config.API_URL}${url}`),
+            timeout(_config.TIME_OUT), 
+        ]);
+        // extracting data from promise using json
+        const data = await res.json();
+        // guard for throwing new error
+        if (!res.ok) throw new Error(`loading failed : ${data.message} ${res.status}`);
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
+const timeout = function(s) {
+    return new Promise(function(_, reject) {
+        setTimeout(function() {
+            reject(new Error(`Request took too long! Timeout after ${s} second`));
+        }, s * 1000);
+    });
+};
+
+},{"regenerator-runtime":"1EBPE","./config":"6V52N","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1EBPE":[function(require,module,exports) {
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -1160,7 +1190,17 @@ try {
     else Function("r", "regeneratorRuntime = r")(runtime);
 }
 
-},{}],"ciiiV":[function(require,module,exports) {
+},{}],"6V52N":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "API_URL", ()=>API_URL
+);
+parcelHelpers.export(exports, "TIME_OUT", ()=>TIME_OUT
+);
+const API_URL = `https://forkify-api.herokuapp.com/api/v2/recipes/`;
+const TIME_OUT = 10;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"ciiiV":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -1190,49 +1230,7 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"6V52N":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "API_URL", ()=>API_URL
-);
-parcelHelpers.export(exports, "TIME_OUT", ()=>TIME_OUT
-);
-const API_URL = `https://forkify-api.herokuapp.com/api/v2/recipes/`;
-const TIME_OUT = 10;
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"9RX9R":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "getJson", ()=>getJson
-);
-parcelHelpers.export(exports, "timeout", ()=>timeout
-);
-var _regeneratorRuntime = require("regenerator-runtime");
-var _config = require("./config");
-const getJson = async function(url) {
-    try {
-        const res = await Promise.race([
-            fetch(`${_config.API_URL}${url}`),
-            timeout(_config.TIME_OUT), 
-        ]);
-        // extracting data from promise using json
-        const data = await res.json();
-        // guard for throwing new error
-        if (!res.ok) throw new Error(`loading failed : ${data.message} ${res.status}`);
-        return data;
-    } catch (err) {
-        throw err;
-    }
-};
-const timeout = function(s) {
-    return new Promise(function(_, reject) {
-        setTimeout(function() {
-            reject(new Error(`Request took too long! Timeout after ${s} second`));
-        }, s * 1000);
-    });
-};
-
-},{"regenerator-runtime":"1EBPE","./config":"6V52N","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"95FYz":[function(require,module,exports) {
+},{}],"95FYz":[function(require,module,exports) {
 require('../modules/es.symbol');
 require('../modules/es.symbol.description');
 require('../modules/es.symbol.async-iterator');
@@ -14998,6 +14996,8 @@ var _fractional = require("fractional");
 class RecipeView {
     #ParentEl = document.querySelector('.recipe');
     #data;
+    #message = `loading failed : there is not to be found , please try another one .`;
+    #successMessage;
     render(data) {
         this.#data = data;
         const html = this.#generateHtlm();
@@ -15104,6 +15104,45 @@ class RecipeView {
         this.#ParentEl.innerHTML = '';
         this.#ParentEl.insertAdjacentHTML('afterbegin', spinnerHtml);
     };
+    addHandlerRender(handler) {
+        [
+            'hashchange',
+            'load'
+        ].forEach((ev)=>window.addEventListener(ev, handler)
+        );
+    }
+    errorHandlying(err = this.#message) {
+        const html = `
+    <div class="error">
+    <div>
+      <svg>
+         <use href="${_iconsSvgDefault.default}#icon-alert-triangle"></use>
+     </svg>
+     </div>
+      <p>${err}</p>
+    </div>
+    </div>
+
+`;
+        this.#ParentEl.innerHTML = '';
+        this.#ParentEl.insertAdjacentHTML('afterbegin', html);
+    }
+    successHandlying(message = this.#successMessage) {
+        const html = `
+    <div class="message">
+    <div>
+      <svg>
+         <use href="${_iconsSvgDefault.default}#icon-smile-triangle"></use>
+     </svg>
+     </div>
+      <p>${message}</p>
+    </div>
+    </div>
+
+`;
+        this.#ParentEl.innerHTML = '';
+        this.#ParentEl.insertAdjacentHTML('afterbegin', html);
+    }
 }
 exports.default = new RecipeView();
 

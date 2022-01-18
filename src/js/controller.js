@@ -14,9 +14,11 @@ const GetOneReceipe = async function () {
     // Setting  Up recipe into the DOM
     recipeView.render(model.state.recipe);
   } catch (err) {
-    console.log(err);
+    recipeView.errorHandlying();
   }
 };
-['hashchange', 'load'].forEach(ev =>
-  window.addEventListener(ev, GetOneReceipe)
-);
+// this is for DOM EVENT HANDLYING
+const init = function () {
+  recipeView.addHandlerRender(GetOneReceipe);
+};
+init();

@@ -1,5 +1,3 @@
-import { async } from 'regenerator-runtime';
-import { API_URL } from './config';
 import { getJson } from './helpers';
 export const state = {
   recipe: {},
@@ -22,6 +20,6 @@ export const loadRecipe = async function (id) {
       servings: recipe.servings,
     };
   } catch (err) {
-    console.error(`Opeération Failed : ${err}`);
+    throw err;
   }
 };
