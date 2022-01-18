@@ -1,0 +1,22 @@
+{
+  "name": "forkify",
+  "version": "1.0.0",
+  "description": "A UI side  JS code for a platform about receipes .  ",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "author": "Ben Ali Hamza",
+  "license": "ISC",
+  "devDependencies": {
+    "@parcel/transformer-sass": "^2.2.0",
+    "parcel": "^2.0.0",
+    "sass": "^1.26.10"
+  },
+  "dependencies": {
+    "core-js": "^3.20.3",
+    "fractional": "^1.0.0",
+    "regenerator-runtime": "^0.13.9"
+  }
+}
