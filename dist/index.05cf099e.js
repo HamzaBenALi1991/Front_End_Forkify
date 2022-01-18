@@ -525,6 +525,9 @@ var _stable = require("core-js/stable");
 var _regeneratorRuntime = require("regenerator-runtime");
 var _recipeView = require("./views/recipeView");
 var _recipeViewDefault = parcelHelpers.interopDefault(_recipeView);
+var _searchView = require("./views/searchView");
+var _searchViewDefault = parcelHelpers.interopDefault(_searchView);
+// get recipe controller
 const GetOneReceipe = async function() {
     try {
         const recepieId = window.location.hash.slice(1);
@@ -539,28 +542,50 @@ const GetOneReceipe = async function() {
         _recipeViewDefault.default.errorHandlying();
     }
 };
+// search controller
+controlSearchResult = async function() {
+    try {
+        // get search query
+        const query = _searchViewDefault.default.getInput();
+        if (!query) return;
+        // load search if exist
+        const data = await _model.loaddSearchResult(query);
+    // render
+    } catch (err) {
+        console.log(err);
+    }
+};
 // this is for DOM EVENT HANDLYING
 const init = function() {
     _recipeViewDefault.default.addHandlerRender(GetOneReceipe);
+    _searchViewDefault.default.addhandler(controlSearchResult);
 };
 init();
 
-},{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1pVJj":[function(require,module,exports) {
+},{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./views/searchView":"jcq1q"}],"1pVJj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state
 );
 parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
+parcelHelpers.export(exports, "loaddSearchResult", ()=>loaddSearchResult
+);
+var _regeneratorRuntime = require("regenerator-runtime");
+var _config = require("./config");
 var _helpers = require("./helpers");
 const state = {
     recipe: {
+    },
+    search: {
+        query: '',
+        seachArray: []
     }
 };
 const loadRecipe = async function(id) {
     try {
         // fetch recipe
-        const data = await _helpers.getJson(id);
+        const data = await _helpers.getJson(`${_config.API_URL}${id}`);
         // reformating recipe object from fetched data
         const { recipe  } = data.data;
         state.recipe = {
@@ -577,8 +602,25 @@ const loadRecipe = async function(id) {
         throw err;
     }
 };
+const loaddSearchResult = async function(str) {
+    try {
+        const data = await _helpers.getJson(`${_config.API_URL}?search=${str}`);
+        state.search.query = str;
+        state.search.seachArray = data.data.recipes.map((recipe)=>{
+            return {
+                id: recipe.id,
+                title: recipe.title,
+                publisher: recipe.publisher,
+                image: recipe.image_url
+            };
+        });
+        console.log(state);
+    } catch (err) {
+        console.log(err);
+    }
+};
 
-},{"./helpers":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"9RX9R":[function(require,module,exports) {
+},{"./helpers":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","regenerator-runtime":"1EBPE","./config":"6V52N"}],"9RX9R":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getJson", ()=>getJson
@@ -590,8 +632,8 @@ var _config = require("./config");
 const getJson = async function(url) {
     try {
         const res = await Promise.race([
-            fetch(`${_config.API_URL}${url}`),
-            timeout(_config.TIME_OUT), 
+            fetch(`${url}`),
+            timeout(_config.TIME_OUT)
         ]);
         // extracting data from promise using json
         const data = await res.json();
@@ -15437,6 +15479,29 @@ Fraction.primeFactors = function(n) {
 };
 module.exports.Fraction = Fraction;
 
-},{}]},["19Ls1","lA0Es"], "lA0Es", "parcelRequire3a11")
+},{}],"jcq1q":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+class SearchView {
+    #buttonEl = document.querySelector('.search');
+    #inputEl = document.querySelector('.search__field');
+    getInput() {
+        const query = this.#inputEl.value;
+        this.#clearInput();
+        return query;
+    }
+     #clearInput() {
+        this.#inputEl.value = '';
+    }
+    addhandler(handler) {
+        this.#buttonEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handler();
+        });
+    }
+}
+exports.default = new SearchView();
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}]},["19Ls1","lA0Es"], "lA0Es", "parcelRequire3a11")
 
 //# sourceMappingURL=index.05cf099e.js.map
