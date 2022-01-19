@@ -3,7 +3,12 @@ import 'core-js/stable';
 import 'regenerator-runtime';
 import recipeView from './views/recipeView';
 import searchView from './views/searchView';
+import searchResultview, { ResultView } from './views/searchResultview';
+import View from './views/view';
 
+if (module.hot) {
+  module.hot.accept();
+}
 // get recipe controller
 const GetOneReceipe = async function () {
   try {
@@ -22,12 +27,17 @@ const GetOneReceipe = async function () {
 // search controller
 controlSearchResult = async function () {
   try {
+    searchResultview.spinner();
     // get search query
     const query = searchView.getInput();
     if (!query) return;
+    console.log(query);
+
     // load search if exist
-    const data = await model.loaddSearchResult(query);
+    await model.loaddSearchResult(query);
+
     // render
+    searchResultview.render(model.state.search.seachArray);
   } catch (err) {
     console.log(err);
   }
@@ -37,4 +47,5 @@ const init = function () {
   recipeView.addHandlerRender(GetOneReceipe);
   searchView.addhandler(controlSearchResult);
 };
+
 init();

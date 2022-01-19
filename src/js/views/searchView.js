@@ -1,18 +1,18 @@
 class SearchView {
-  #buttonEl = document.querySelector('.search');
-  #inputEl = document.querySelector('.search__field');
+  _buttonEl = document.querySelector('.search');
+  _inputEl = document.querySelector('.search__field');
 
   getInput() {
-    const query = this.#inputEl.value;
-    this.#clearInput();
+    const query = this._inputEl.value;
+    this._clearInput();
     return query;
   }
-  #clearInput() {
-    this.#inputEl.value = '';
+  _clearInput() {
+    this._inputEl.value = '';
   }
 
   addhandler(handler) {
-    this.#buttonEl.addEventListener('submit', function (e) {
+    this._buttonEl.addEventListener('submit', function (e) {
       e.preventDefault();
       handler();
     });
