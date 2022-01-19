@@ -3,6 +3,7 @@
 1/ npm i
 2/ npm start
 3/ make sure you have Internet connexion , this application uses Web API
+4/ click in the link to provided to localhost
 
 # Front_End_Forkify
 

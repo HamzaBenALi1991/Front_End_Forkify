@@ -554,11 +554,11 @@ controlSearchResult = async function() {
         // get search query
         const query = _searchViewDefault.default.getInput();
         if (!query) return;
-        console.log(query);
         // load search if exist
         await _model.loaddSearchResult(query);
         // render
-        _searchResultviewDefault.default.render(_model.state.search.seachArray);
+        // searchResultview.render(model.state.search.seachArray);
+        _searchResultviewDefault.default.render(_model.getSearchResultsPage());
     } catch (err) {
         console.log(err);
     }
@@ -579,6 +579,8 @@ parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 );
 parcelHelpers.export(exports, "loaddSearchResult", ()=>loaddSearchResult
 );
+parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage
+);
 var _regeneratorRuntime = require("regenerator-runtime");
 var _config = require("./config");
 var _helpers = require("./helpers");
@@ -587,7 +589,8 @@ const state = {
     },
     search: {
         query: '',
-        seachArray: []
+        seachArray: [],
+        page: 1
     }
 };
 const loadRecipe = async function(id) {
@@ -626,6 +629,12 @@ const loaddSearchResult = async function(str) {
     } catch (err) {
         console.log(err);
     }
+};
+const getSearchResultsPage = function(page = state.search.page) {
+    state.search.page = page;
+    const start = (page - 1) * _config.RESULT_PER_PAGE;
+    const end = page * _config.RESULT_PER_PAGE;
+    return state.search.seachArray.slice(start, end);
 };
 
 },{"./helpers":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","regenerator-runtime":"1EBPE","./config":"6V52N"}],"9RX9R":[function(require,module,exports) {
@@ -1247,8 +1256,11 @@ parcelHelpers.export(exports, "API_URL", ()=>API_URL
 );
 parcelHelpers.export(exports, "TIME_OUT", ()=>TIME_OUT
 );
+parcelHelpers.export(exports, "RESULT_PER_PAGE", ()=>RESULT_PER_PAGE
+);
 const API_URL = `https://forkify-api.herokuapp.com/api/v2/recipes/`;
 const TIME_OUT = 10;
+const RESULT_PER_PAGE = 10;
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"ciiiV":[function(require,module,exports) {
 exports.interopDefault = function(a) {

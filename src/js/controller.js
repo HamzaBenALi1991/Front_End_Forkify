@@ -31,13 +31,12 @@ controlSearchResult = async function () {
     // get search query
     const query = searchView.getInput();
     if (!query) return;
-    console.log(query);
-
     // load search if exist
     await model.loaddSearchResult(query);
 
     // render
-    searchResultview.render(model.state.search.seachArray);
+    // searchResultview.render(model.state.search.seachArray);
+    searchResultview.render(model.getSearchResultsPage());
   } catch (err) {
     console.log(err);
   }
