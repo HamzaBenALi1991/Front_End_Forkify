@@ -1,12 +1,10 @@
 import View from './view';
-import icons from 'url:../../img/icons.svg';
 
 export class ResultView extends View {
   _ParentEl = document.querySelector('.results');
   _message = `No recipe with the name you searched  , please try another one .`;
   _successMessage;
   _generateHtlm() {
-    console.log(this._data);
     return this._data.map(res => this._generateHtlmReview(res)).join('');
   }
 

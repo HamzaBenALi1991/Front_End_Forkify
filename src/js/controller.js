@@ -5,6 +5,7 @@ import recipeView from './views/recipeView';
 import searchView from './views/searchView';
 import searchResultview, { ResultView } from './views/searchResultview';
 import View from './views/view';
+import paginationview from './views/paginationview';
 
 if (module.hot) {
   module.hot.accept();
@@ -37,14 +38,22 @@ controlSearchResult = async function () {
     // render
     // searchResultview.render(model.state.search.seachArray);
     searchResultview.render(model.getSearchResultsPage());
+    // render pagination
+    paginationview.render(model.state.search);
   } catch (err) {
     console.log(err);
   }
 };
-// this is for DOM EVENT HANDLYING
+const paginationController = function (goToPage) {
+  searchResultview.render(model.getSearchResultsPage(goToPage));
+  // render pagination
+  paginationview.render(model.state.search);
+};
+// this is for DOM EVENT HANDLYING outside of controller
 const init = function () {
   recipeView.addHandlerRender(GetOneReceipe);
   searchView.addhandler(controlSearchResult);
+  paginationview.addHandlerClick(paginationController);
 };
 
 init();

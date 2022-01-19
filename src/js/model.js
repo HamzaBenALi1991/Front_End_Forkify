@@ -7,6 +7,7 @@ export const state = {
     query: '',
     seachArray: [],
     page: 1,
+    resultsPerPage: RESULT_PER_PAGE,
   },
 };
 
@@ -43,7 +44,6 @@ export const loaddSearchResult = async function (str) {
         image: recipe.image_url,
       };
     });
-    console.log(state);
   } catch (err) {
     console.log(err);
   }
