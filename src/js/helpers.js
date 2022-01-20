@@ -3,10 +3,7 @@ import { API_URL, TIME_OUT } from './config';
 
 export const getJson = async function (url) {
   try {
-    const res = await Promise.race([
-      fetch(`${API_URL}${url}`),
-      timeout(TIME_OUT),
-    ]);
+    const res = await Promise.race([fetch(`${url}`), timeout(TIME_OUT)]);
     // extracting data from promise using json
     const data = await res.json();
     // guard for throwing new error
