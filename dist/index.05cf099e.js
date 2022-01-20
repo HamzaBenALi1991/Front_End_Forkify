@@ -533,7 +533,6 @@ var _view = require("./views/view");
 var _viewDefault = parcelHelpers.interopDefault(_view);
 var _paginationview = require("./views/paginationview");
 var _paginationviewDefault = parcelHelpers.interopDefault(_paginationview);
-if (module.hot) module.hot.accept();
 // get recipe controller
 const GetOneReceipe = async function() {
     try {
@@ -541,6 +540,8 @@ const GetOneReceipe = async function() {
         if (!recepieId) return;
         // spinner
         _recipeViewDefault.default.spinner();
+        //update result view to mark selected search result
+        _searchResultviewDefault.default.update(_model.getSearchResultsPage());
         // load recipe
         await _model.loadRecipe(recepieId);
         // Setting  Up recipe into the DOM
@@ -572,11 +573,16 @@ const paginationController = function(goToPage) {
     // render pagination
     _paginationviewDefault.default.render(_model.state.search);
 };
+const survingsControl = function(newS) {
+    _model.updateServings(newS);
+    _recipeViewDefault.default.update(_model.state.recipe);
+};
 // this is for DOM EVENT HANDLYING outside of controller
 const init = function() {
     _recipeViewDefault.default.addHandlerRender(GetOneReceipe);
     _searchViewDefault.default.addhandler(controlSearchResult);
     _paginationviewDefault.default.addHandlerClick(paginationController);
+    _recipeViewDefault.default.addHandlerUpdateServ(survingsControl);
 };
 init();
 
@@ -590,6 +596,14 @@ parcelHelpers.export(exports, "loadRecipe", ()=>loadRecipe
 parcelHelpers.export(exports, "loaddSearchResult", ()=>loaddSearchResult
 );
 parcelHelpers.export(exports, "getSearchResultsPage", ()=>getSearchResultsPage
+);
+parcelHelpers.export(exports, "updateServings", ()=>updateServings
+);
+parcelHelpers.export(exports, "addBookmark", ()=>addBookmark
+);
+parcelHelpers.export(exports, "deleteBookmark", ()=>deleteBookmark
+);
+parcelHelpers.export(exports, "uploadRecipe", ()=>uploadRecipe
 );
 var _regeneratorRuntime = require("regenerator-runtime");
 var _config = require("./config");
@@ -645,6 +659,70 @@ const getSearchResultsPage = function(page = state.search.page) {
     const start = (page - 1) * _config.RESULT_PER_PAGE;
     const end = page * _config.RESULT_PER_PAGE;
     return state.search.seachArray.slice(start, end);
+};
+const updateServings = function(newServings) {
+    state.recipe.ingredients.forEach((element)=>{
+        element.quantity = element.quantity * newServings / state.recipe.servings;
+    });
+    state.recipe.servings = newServings;
+};
+const persistBookmarks = function() {
+    localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+};
+const addBookmark = function(recipe) {
+    // Add bookmark
+    state.bookmarks.push(recipe);
+    // Mark current recipe as bookmarked
+    if (recipe.id === state.recipe.id) state.recipe.bookmarked = true;
+    persistBookmarks();
+};
+const deleteBookmark = function(id) {
+    // Delete bookmark
+    const index = state.bookmarks.findIndex((el)=>el.id === id
+    );
+    state.bookmarks.splice(index, 1);
+    // Mark current recipe as NOT bookmarked
+    if (id === state.recipe.id) state.recipe.bookmarked = false;
+    persistBookmarks();
+};
+const init = function() {
+    const storage = localStorage.getItem('bookmarks');
+    if (storage) state.bookmarks = JSON.parse(storage);
+};
+init();
+const clearBookmarks = function() {
+    localStorage.clear('bookmarks');
+};
+const uploadRecipe = async function(newRecipe) {
+    try {
+        const ingredients = Object.entries(newRecipe).filter((entry)=>entry[0].startsWith('ingredient') && entry[1] !== ''
+        ).map((ing)=>{
+            const ingArr = ing[1].split(',').map((el)=>el.trim()
+            );
+            // const ingArr = ing[1].replaceAll(' ', '').split(',');
+            if (ingArr.length !== 3) throw new Error('Wrong ingredient fromat! Please use the correct format :)');
+            const [quantity, unit, description] = ingArr;
+            return {
+                quantity: quantity ? +quantity : null,
+                unit,
+                description
+            };
+        });
+        const recipe = {
+            title: newRecipe.title,
+            source_url: newRecipe.sourceUrl,
+            image_url: newRecipe.image,
+            publisher: newRecipe.publisher,
+            cooking_time: +newRecipe.cookingTime,
+            servings: +newRecipe.servings,
+            ingredients
+        };
+        const data = await AJAX(`${_config.API_URL}?key=${KEY}`, recipe);
+        state.recipe = createRecipeObject(data);
+        addBookmark(state.recipe);
+    } catch (err) {
+        throw err;
+    }
 };
 
 },{"./helpers":"9RX9R","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","regenerator-runtime":"1EBPE","./config":"6V52N"}],"9RX9R":[function(require,module,exports) {
@@ -15097,12 +15175,12 @@ class RecipeView extends _viewDefault.default {
           <span class="recipe__info-text"> Servings</span>
     
           <div class="recipe__info-buttons">
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings - 1}">
               <svg>
                 <use href="${_iconsSvgDefault.default}#icon-minus-circle"></use>
               </svg>
             </button>
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings"  data-update-to="${this._data.servings + 1}">
               <svg>
                 <use href="${_iconsSvgDefault.default}#icon-plus-circle"></use>
               </svg>
@@ -15165,6 +15243,15 @@ class RecipeView extends _viewDefault.default {
             'load'
         ].forEach((ev)=>window.addEventListener(ev, handler)
         );
+    }
+    addHandlerUpdateServ(handler) {
+        this._ParentEl.addEventListener('click', function(e) {
+            const btn = e.target.closest('.btn--update-servings');
+            if (!btn) return;
+            const { updateTo  } = btn.dataset;
+            console.log(updateTo);
+            if (+updateTo > 0) handler(+updateTo);
+        });
     }
 }
 exports.default = new RecipeView();
@@ -15506,6 +15593,23 @@ class View {
         this._ParentEl.innerHTML = '';
         this._ParentEl.insertAdjacentHTML('afterbegin', html);
     }
+    update(data) {
+        this._data = data;
+        const newMarkup = this._generateHtlm();
+        const newDOM = document.createRange().createContextualFragment(newMarkup);
+        const newElements = Array.from(newDOM.querySelectorAll('*'));
+        const curElements = Array.from(this._ParentEl.querySelectorAll('*'));
+        newElements.forEach((newEl, i)=>{
+            const curEl = curElements[i];
+            // console.log(curEl, newEl.isEqualNode(curEl));
+            // Updates changed TEXT
+            if (!newEl.isEqualNode(curEl) && newEl.firstChild?.nodeValue.trim() !== '') // console.log('💥', newEl.firstChild.nodeValue.trim());
+            curEl.textContent = newEl.textContent;
+            // Updates changed ATTRIBUES
+            if (!newEl.isEqualNode(curEl)) Array.from(newEl.attributes).forEach((attr)=>curEl.setAttribute(attr.name, attr.value)
+            );
+        });
+    }
     spinner = function() {
         const spinnerHtml = `
     <div class="spinner">
@@ -15558,9 +15662,11 @@ class ResultView extends _viewDefault.default {
         ).join('');
     }
     _generateHtlmReview(data) {
+        const id = window.location.hash.slice(1);
+        console.log(data.id, id);
         return `
     <li class="preview">
-    <a class="preview__link preview__link" href="#${data.id}">
+    <a class="preview__link  ${data.id === id ? 'preview__link--active' : ''}" href="#${data.id}">
       <figure class="preview__fig">
         <img src="${data.image}" alt="Test" />
       </figure>

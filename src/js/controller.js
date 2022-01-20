@@ -7,16 +7,18 @@ import searchResultview, { ResultView } from './views/searchResultview';
 import View from './views/view';
 import paginationview from './views/paginationview';
 
-if (module.hot) {
-  module.hot.accept();
-}
 // get recipe controller
 const GetOneReceipe = async function () {
   try {
     const recepieId = window.location.hash.slice(1);
     if (!recepieId) return;
+
     // spinner
     recipeView.spinner();
+
+    //update result view to mark selected search result
+    searchResultview.update(model.getSearchResultsPage());
+
     // load recipe
     await model.loadRecipe(recepieId);
     // Setting  Up recipe into the DOM
@@ -30,6 +32,7 @@ controlSearchResult = async function () {
   try {
     searchResultview.spinner();
     // get search query
+
     const query = searchView.getInput();
     if (!query) return;
     // load search if exist
@@ -49,11 +52,17 @@ const paginationController = function (goToPage) {
   // render pagination
   paginationview.render(model.state.search);
 };
+
+const survingsControl = function (newS) {
+  model.updateServings(newS);
+  recipeView.update(model.state.recipe);
+};
 // this is for DOM EVENT HANDLYING outside of controller
 const init = function () {
   recipeView.addHandlerRender(GetOneReceipe);
   searchView.addhandler(controlSearchResult);
   paginationview.addHandlerClick(paginationController);
+  recipeView.addHandlerUpdateServ(survingsControl);
 };
 
 init();

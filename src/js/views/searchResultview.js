@@ -9,9 +9,13 @@ export class ResultView extends View {
   }
 
   _generateHtlmReview(data) {
+    const id = window.location.hash.slice(1);
+    console.log(data.id, id);
     return `
     <li class="preview">
-    <a class="preview__link preview__link" href="#${data.id}">
+    <a class="preview__link  ${
+      data.id === id ? 'preview__link--active' : ''
+    }" href="#${data.id}">
       <figure class="preview__fig">
         <img src="${data.image}" alt="Test" />
       </figure>
