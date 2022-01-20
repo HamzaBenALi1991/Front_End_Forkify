@@ -35,11 +35,12 @@ export default class View {
     this._ParentEl.innerHTML = '';
     this._ParentEl.insertAdjacentHTML('afterbegin', html);
   }
-  render(data) {
+  render(data, render = true) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.errorHandlying();
     this._data = data;
     const html = this._generateHtlm();
+    if (!render) return html;
     this._ParentEl.innerHTML = '';
     this._ParentEl.insertAdjacentHTML('afterbegin', html);
   }
@@ -53,8 +54,6 @@ export default class View {
 
     newElements.forEach((newEl, i) => {
       const curEl = curElements[i];
-      // console.log(curEl, newEl.isEqualNode(curEl));
-
       // Updates changed TEXT
       if (
         !newEl.isEqualNode(curEl) &&
@@ -71,7 +70,6 @@ export default class View {
         );
     });
   }
-
   spinner = function () {
     const spinnerHtml = `
     <div class="spinner">
