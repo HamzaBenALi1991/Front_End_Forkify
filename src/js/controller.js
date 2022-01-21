@@ -4,9 +4,9 @@ import 'regenerator-runtime';
 import recipeView from './views/recipeView';
 import searchView from './views/searchView';
 import searchResultview from './views/searchResultview';
-import View from './views/view';
 import paginationview from './views/paginationview';
 import bookmarksView from './views/bookmarksView';
+import addRecipeView from './views/addRecipeView';
 
 // get recipe controller
 const GetOneReceipe = async function () {
@@ -70,7 +70,9 @@ const controllerAddBookmark = function () {
   // render the bookmarks
   bookmarksView.render(model.state.bookmarks);
 };
-
+const controllerAddRecipe = function (newRec) {
+  console.log(newRec);
+};
 const bookmarkInit = function () {
   bookmarksView.render(model.state.bookmarks);
 };
@@ -82,6 +84,7 @@ const init = function () {
   paginationview.addHandlerClick(paginationController);
   recipeView.addHandlerUpdateServ(survingsControl);
   recipeView.addhandlerBookMark(controllerAddBookmark);
+  addRecipeView.addhandlerUpload(controllerAddRecipe);
 };
 
 init();

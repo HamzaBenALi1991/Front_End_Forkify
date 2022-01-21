@@ -529,12 +529,12 @@ var _searchView = require("./views/searchView");
 var _searchViewDefault = parcelHelpers.interopDefault(_searchView);
 var _searchResultview = require("./views/searchResultview");
 var _searchResultviewDefault = parcelHelpers.interopDefault(_searchResultview);
-var _view = require("./views/view");
-var _viewDefault = parcelHelpers.interopDefault(_view);
 var _paginationview = require("./views/paginationview");
 var _paginationviewDefault = parcelHelpers.interopDefault(_paginationview);
 var _bookmarksView = require("./views/bookmarksView");
 var _bookmarksViewDefault = parcelHelpers.interopDefault(_bookmarksView);
+var _addRecipeView = require("./views/addRecipeView");
+var _addRecipeViewDefault = parcelHelpers.interopDefault(_addRecipeView);
 // get recipe controller
 const GetOneReceipe = async function() {
     try {
@@ -591,6 +591,9 @@ const controllerAddBookmark = function() {
     // render the bookmarks
     _bookmarksViewDefault.default.render(_model.state.bookmarks);
 };
+const controllerAddRecipe = function(newRec) {
+    console.log(newRec);
+};
 const bookmarkInit = function() {
     _bookmarksViewDefault.default.render(_model.state.bookmarks);
 };
@@ -602,10 +605,11 @@ const init = function() {
     _paginationviewDefault.default.addHandlerClick(paginationController);
     _recipeViewDefault.default.addHandlerUpdateServ(survingsControl);
     _recipeViewDefault.default.addhandlerBookMark(controllerAddBookmark);
+    _addRecipeViewDefault.default.addhandlerUpload(controllerAddRecipe);
 };
 init();
 
-},{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","./views/searchView":"jcq1q","./views/searchResultview":"dR7Am","./views/view":"aXC0x","./views/paginationview":"9fJjG","./views/bookmarksView":"764v9","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1pVJj":[function(require,module,exports) {
+},{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","./views/searchView":"jcq1q","./views/searchResultview":"dR7Am","./views/paginationview":"9fJjG","./views/bookmarksView":"764v9","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./views/addRecipeView":"Lo2AT"}],"1pVJj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state
@@ -15699,7 +15703,7 @@ class ResultView extends _viewDefault.default {
 }
 exports.default = new ResultView();
 
-},{"./view":"aXC0x","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./previewView":"i65ZK"}],"i65ZK":[function(require,module,exports) {
+},{"./view":"aXC0x","./previewView":"i65ZK","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"i65ZK":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "PreviewView", ()=>PreviewView
@@ -15810,6 +15814,48 @@ class bookmarksView extends _viewDefault.default {
 }
 exports.default = new bookmarksView();
 
-},{"./view":"aXC0x","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./previewView":"i65ZK"}]},["19Ls1","lA0Es"], "lA0Es", "parcelRequire3a11")
+},{"./view":"aXC0x","./previewView":"i65ZK","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"Lo2AT":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _view = require("./view");
+var _viewDefault = parcelHelpers.interopDefault(_view);
+class addRecipeView extends _viewDefault.default {
+    _ParentEl = document.querySelector('.upload');
+    _window = document.querySelector('.add-recipe-window');
+    _overlay = document.querySelector('.overlay');
+    _btnOpen = document.querySelector('.nav__btn--add-recipe');
+    _btnClose = document.querySelector('.btn--close-modal');
+    constructor(){
+        super();
+        this._addHandlerClick();
+        this.addHandlerCloseWindow();
+    }
+    windowToggle() {
+        this._window.classList.toggle('hidden');
+        this._overlay.classList.toggle('hidden');
+    }
+    _addHandlerClick() {
+        this._btnOpen.addEventListener('click', this.windowToggle.bind(this));
+    }
+    addHandlerCloseWindow() {
+        this._btnClose.addEventListener('click', this.windowToggle.bind(this));
+        this._overlay.addEventListener('click', this.windowToggle.bind(this));
+    }
+    addhandlerUpload(handler) {
+        this._ParentEl.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const dataArr = [
+                ...new FormData(this)
+            ];
+            const data = Object.fromEntries(dataArr);
+            handler(data);
+        });
+    }
+    _generateHtlm() {
+    }
+}
+exports.default = new addRecipeView();
+
+},{"./view":"aXC0x","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}]},["19Ls1","lA0Es"], "lA0Es", "parcelRequire3a11")
 
 //# sourceMappingURL=index.05cf099e.js.map
