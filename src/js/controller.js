@@ -7,6 +7,7 @@ import searchResultview from './views/searchResultview';
 import paginationview from './views/paginationview';
 import bookmarksView from './views/bookmarksView';
 import addRecipeView from './views/addRecipeView';
+import { async } from 'regenerator-runtime';
 
 // get recipe controller
 const GetOneReceipe = async function () {
@@ -70,8 +71,28 @@ const controllerAddBookmark = function () {
   // render the bookmarks
   bookmarksView.render(model.state.bookmarks);
 };
-const controllerAddRecipe = function (newRec) {
-  console.log(newRec);
+const controllerAddRecipe = async function (newRec) {
+  try {
+    addRecipeView.spinner();
+    // uploading
+    await model.uploadRecipe(newRec);
+    // render recipe just uploaded
+    recipeView.render(model.state.recipe);
+
+    addRecipeView.successHandlying();
+
+    bookmarksView.render(model.state.bookmarks);
+
+    // change id in the url
+    window.history.pushState(null, '', `#${model.state.recipe.id}`);
+
+    setTimeout(() => {
+      addRecipeView.windowToggle();
+    }, 2500);
+  } catch (err) {
+    console.error(err);
+    addRecipeView.errorHandlying(err.message);
+  }
 };
 const bookmarkInit = function () {
   bookmarksView.render(model.state.bookmarks);

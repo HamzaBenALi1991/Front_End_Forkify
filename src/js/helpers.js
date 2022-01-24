@@ -1,9 +1,18 @@
 import { async } from 'regenerator-runtime';
 import { API_URL, TIME_OUT } from './config';
 
-export const getJson = async function (url) {
+export const AJAX = async function (url, recipeObject = undefined) {
   try {
-    const res = await Promise.race([fetch(`${url}`), timeout(TIME_OUT)]);
+    const fetchPro = recipeObject
+      ? fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recipeObject),
+        })
+      : fetch(url);
+    const res = await Promise.race([fetchPro, timeout(TIME_OUT)]);
     // extracting data from promise using json
     const data = await res.json();
     // guard for throwing new error
@@ -12,6 +21,7 @@ export const getJson = async function (url) {
       throw new Error(`loading failed : ${data.message} ${res.status}`);
     return data;
   } catch (err) {
+    console.log(err);
     throw err;
   }
 };
