@@ -23,6 +23,6 @@ the HTML and CSS/SASS is not created by me(Ben_Ali_Hamza) .
 
 ### ScreenShots :
 
-|                 _Home_                  |                    Search                     |                    _Add recipe_                     |                    _Boorkmars_                     |                                              | Recipe |
-| :-------------------------------------: | :-------------------------------------------: | :-------------------------------------------------: | :------------------------------------------------: | :------------------------------------------: | ------ |
-| ![HOME](./src/img/screenShots/Home.png) | ![Search](./src/img/screenShots/recipe2.png)) | ![Add recipe](./src/img/screenShots/addRecipe.png)) | ![Boorkmars](./src/img/screenShots/bookmarks.png)) | ![Recipe](./src/img/screenShots/recipe.png)) |
+|                 _Home_                  |                       Search                       |                    _Add recipe_                    |                    _Boorkmars_                    |                   _Recipe_                   |
+| :-------------------------------------: | :------------------------------------------------: | :------------------------------------------------: | :-----------------------------------------------: | :------------------------------------------: |
+| ![HOME](./src/img/screenShots/Home.png) | ![Search](./src/img/screenShots/recipe_search.png) | ![Add recipe](./src/img/screenShots/addRecipe.png) | ![Boorkmars](./src/img/screenShots/bookmarks.png) | ![Recipe](./src/img/screenShots/recipe2.png) |
