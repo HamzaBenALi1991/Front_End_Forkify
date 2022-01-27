@@ -625,7 +625,7 @@ const init = function() {
 };
 init();
 
-},{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","./views/searchView":"jcq1q","./views/searchResultview":"dR7Am","./views/paginationview":"9fJjG","./views/bookmarksView":"764v9","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","./views/addRecipeView":"Lo2AT"}],"1pVJj":[function(require,module,exports) {
+},{"./model":"1pVJj","core-js/stable":"95FYz","regenerator-runtime":"1EBPE","./views/recipeView":"82pEw","./views/searchView":"jcq1q","./views/searchResultview":"dR7Am","./views/paginationview":"9fJjG","./views/bookmarksView":"764v9","./views/addRecipeView":"Lo2AT","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"1pVJj":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "state", ()=>state
@@ -15790,7 +15790,7 @@ class PreviewView extends _viewDefault.default {
 }
 exports.default = new PreviewView();
 
-},{"./view":"aXC0x","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV","url:../../img/icons.svg":"5jwFy"}],"9fJjG":[function(require,module,exports) {
+},{"./view":"aXC0x","url:../../img/icons.svg":"5jwFy","@parcel/transformer-js/src/esmodule-helpers.js":"ciiiV"}],"9fJjG":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _iconsSvg = require("url:../../img/icons.svg");
